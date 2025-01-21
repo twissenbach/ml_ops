@@ -28,10 +28,36 @@ def add_user():
 
     return jsonify({'id': data.id, 'user_name': data.username, 'email': data.email}), 201
 
+@users.route('/users/<user_id>', methods=['GET'])
+def get_user(user_id):
+
+    data = user_controller.get_user(user_id)
+    return jsonify({'id': data.id, 'user_name': data.username, 'email': data.email}), 201
+
+@users.route('/users/<user_id>', methods=['PATCH'])
+def modify_user(user_id):
+
+    data = request.json
+
+    try:
+        user = user_controller.modify_user(user_id, data)
+    except ValueError as e:
+        logger.exception(f'Encountered error {str(e)}')
+        return jsonify({'id': user_id, 'message': 'User does not exist'}), 404
+
+    return jsonify({'id': user.id, 'user_name': user.username, 'email': user.email}), 201
+
+@users.route('/users/<user_id>', methods=['DELETE'])
+def delete_user(user_id):
+
+    user_controller.delete_user(user_id)
+
+    return jsonify({'id': user_id, 'message': 'User deleted successfully'}), 200
+
 @users.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
     output = []
     for user in users:
-        output.append({'id': user.id, 'username': user.username, 'email': user.email})
+        output.append({'id': user.id, 'user_name': user.username, 'email': user.email})
     return jsonify(output), 200

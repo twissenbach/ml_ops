@@ -23,12 +23,12 @@ def init_db(app) -> None:
 
     db.init_app(app)
 
-    # create the database and the User table
-    with app.app_context():
-        try:
-            db.drop_all()
-        except:
-            pass
+    # # create the database and the User table
+    # with app.app_context():
+    #     try:
+    #         db.drop_all()
+    #     except:
+    #         pass
 
-        db.create_all()
-        db.session.commit()
+    #     db.create_all()
+    #     db.session.commit()
