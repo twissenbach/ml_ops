@@ -1,8 +1,10 @@
 import logging
+import time
 import uuid
 
 from model_serving.services.database.database_client import db
 from model_serving.models.users import User
+# from model_serving.monitoring import DATABASE_LATENCY
 
 from sqlalchemy import delete
 
@@ -18,8 +20,13 @@ class UserController:
 
         logger.debug(f'Created user id {new_user.id} for {new_user.email}')
     
+        start_time = time.time()
         db.session.add(new_user)
         db.session.commit()
+
+        # DATABASE_LATENCY.observe(time.time() - start_time)
+        # # DATABASE_LATENCY.labels(methods='SELECT')observe(time.time() - start_time)
+
 
         return new_user
     
