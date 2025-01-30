@@ -20,13 +20,12 @@ class UserController:
 
         logger.debug(f'Created user id {new_user.id} for {new_user.email}')
     
-        start_time = time.time()
+        # start_time = time.time()
         db.session.add(new_user)
         db.session.commit()
 
         # DATABASE_LATENCY.observe(time.time() - start_time)
-        # # DATABASE_LATENCY.labels(methods='SELECT')observe(time.time() - start_time)
-
+        # DATABASE_LATENCY.labels(methods='SELECT')observe(time.time() - start_time)
 
         return new_user
     

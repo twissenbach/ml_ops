@@ -1,0 +1,15 @@
+artifact_uri: /Users/troywissenbach/Documents/Spring 2025 Classes/ml_ops/mlflow_exploration/mlruns/0/ee9bf95df9a443798dd2e54a911d8490/artifacts
+end_time: 1738110933202
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ee9bf95df9a443798dd2e54a911d8490
+run_name: angry-turtle-9
+run_uuid: ee9bf95df9a443798dd2e54a911d8490
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1738110931748
+status: 3
+tags: []
+user_id: troywissenbach

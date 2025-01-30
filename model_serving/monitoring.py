@@ -11,11 +11,13 @@ from prometheus_client import CollectorRegistry, Counter, Histogram, multiproces
 
 registry = CollectorRegistry()
 multiprocess.MultiProcessCollector(registry=registry, path="/tmp/prometheus_multiproc")
+# multiprocess.MultiProcessCollector(registry=registry)
+
 
 REQUEST_COUNT = Counter('request_count', 'Total number of requests', ['method', 'endpoint', 'http_status'], registry=registry)
 REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds', ['method', 'endpoint', 'http_status'], registry=registry)
 
-# DATABASE_LATENCY = Histogram('database_latency', 'Database latency in seconds', ['method', 'endpoint', 'http_status'], registry=registry)
+# DATABASE_LATENCY = Histogram('database_latency', 'Database Latency', ['method', 'endpoint', 'http_status'], registry=registry)
 
 
 def before_request():

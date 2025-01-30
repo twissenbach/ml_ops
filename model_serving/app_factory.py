@@ -15,10 +15,13 @@ def create_app(config):
     app = Flask(__name__)
 
     # Configure the SQLite database
+    app.config.from_object(config)
+    
+    # Configure the SQLite database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    app.config.from_object(config)
+    
 
     init_db(app=app)
     # create_logger(app=app)
