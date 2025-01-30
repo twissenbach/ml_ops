@@ -14,17 +14,19 @@ logger = logging.getLogger(__name__) # You technically don't need this line. You
 
 @users.route('/users', methods=['POST']) # Route
 def add_user():
-
     data = request.json
 
     try:
         data = user_controller.create_user(data)
+    except ValueError as e:
+        logger.exception(f'Encountered error {str(e)}')
+        return jsonify({'message': str(e)}), 400
     except KeyError as e:
         logger.exception(f'Encountered error {str(e)}')
-        return jsonify({'message': 'User created successfully!'}), 406
+        return jsonify({'message': 'Invalid request data'}), 406
     except Exception as e:
         logger.exception(f'Encountered Error {str(e)}')
-        return jsonify({'message': 'User created successfully!'}), 404
+        return jsonify({'message': 'Server error'}), 500
 
     return jsonify({'id': data.id, 'user_name': data.username, 'email': data.email}), 201
 
@@ -41,11 +43,25 @@ def modify_user(user_id):
 
     try:
         user = user_controller.modify_user(user_id, data)
+    except KeyError as e:
+        logger.exception(f'Encountered error {str(e)}')
+        return jsonify({
+            'message': str(e)
+        }), 400
     except ValueError as e:
         logger.exception(f'Encountered error {str(e)}')
-        return jsonify({'id': user_id, 'message': 'User does not exist'}), 404
+        return jsonify({
+            'message': 'User does not exist'
+        }), 404
 
-    return jsonify({'id': user.id, 'user_name': user.username, 'email': user.email}), 201
+    return jsonify({
+        'message': 'User details updated successfully',
+        'user': {
+            'id': user.id,
+            'user_name': user.username,
+            'email': user.email
+        }
+    }), 200  # Changed from 201 to 200 for updates
 
 @users.route('/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):

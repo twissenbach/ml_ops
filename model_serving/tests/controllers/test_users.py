@@ -1,6 +1,9 @@
 import pytest
 from unittest.mock import Mock, patch
 import uuid
+from sqlalchemy import delete
+from flask import Flask
+from model_serving.routes.users import users  # Import the Blueprint
 
 from model_serving.controllers.users import UserController
 from model_serving.models.users import User
@@ -30,71 +33,236 @@ def sample_user():
     )
 
 class TestUserController:
-    
-    def test_create_user_success(self, user_controller, mock_db_session, sample_user_data):
-        # Test successful user creation
-        new_user = user_controller.create_user(sample_user_data)
+    def test_create_user_basic(self, user_controller, mock_db_session, sample_user_data):
+        # Configure mock to return None for the email existence check
+        mock_db_session.query.return_value.filter.return_value.first.return_value = None
         
-        assert new_user.username == sample_user_data['username']
-        assert new_user.email == sample_user_data['email']
-        assert isinstance(new_user.id, str)
+        # Test basic user creation with valid data
+        result = user_controller.create_user(sample_user_data)
         
+        # Assert the user was created with correct data
+        assert result.username == sample_user_data['username']
+        assert result.email == sample_user_data['email']
+        assert hasattr(result, 'id')
+        
+        # Verify database interactions
         mock_db_session.add.assert_called_once()
         mock_db_session.commit.assert_called_once()
 
-    def test_create_user_missing_data(self, user_controller):
-        # Test user creation with missing data
-        with pytest.raises(KeyError):
-            user_controller.create_user({'username': 'testuser'})  # Missing email
-
-    def test_get_user_success(self, user_controller, mock_db_session, sample_user):
-        # Setup mock query
+    def test_get_user_basic(self, user_controller, mock_db_session, sample_user):
+        # Configure mock to return the sample user
         mock_db_session.query.return_value.filter.return_value.first.return_value = sample_user
         
-        # Test successful user retrieval
-        user = user_controller.get_user(sample_user.id)
+        # Test getting user by ID
+        result = user_controller.get_user(sample_user.id)
         
-        assert user == sample_user
-        mock_db_session.query.assert_called_once_with(User)
+        # Assert the correct user was returned
+        assert result.id == sample_user.id
+        assert result.username == sample_user.username
+        assert result.email == sample_user.email
+        
+        # Verify database was queried
+        mock_db_session.query.assert_called_once()
 
-    def test_get_user_not_found(self, user_controller, mock_db_session):
-        # Setup mock query to return None
-        mock_db_session.query.return_value.filter.return_value.first.return_value = None
-        
-        # Test user retrieval when user doesn't exist
-        user = user_controller.get_user('nonexistent_id')
-        
-        assert user is None
-
-    def test_modify_user_success(self, user_controller, mock_db_session, sample_user):
-        # Setup mock get_user
+    def test_modify_user_basic(self, user_controller, mock_db_session, sample_user):
+        # Configure mock to return the sample user for the existence check
         mock_db_session.query.return_value.filter.return_value.first.return_value = sample_user
         
-        # Test successful user modification
-        modified_data = {
-            'email': 'new@example.com',
-            'user_name': 'newusername'
+        # Test data for update
+        update_data = {
+            'email': 'updated@example.com',
+            'user_name': 'updateduser'
         }
         
-        modified_user = user_controller.modify_user(sample_user.id, modified_data)
+        # Test modifying user
+        result = user_controller.modify_user(sample_user.id, update_data)
         
-        assert modified_user.email == modified_data['email']
-        assert modified_user.username == modified_data['user_name']
+        # Assert the user was updated with correct data
+        assert result.id == sample_user.id
+        assert result.username == update_data['user_name']
+        assert result.email == update_data['email']
+        
+        # Verify database interactions
         mock_db_session.merge.assert_called_once()
         mock_db_session.commit.assert_called_once()
 
-    def test_modify_user_not_found(self, user_controller, mock_db_session):
-        # Setup mock get_user to return None
-        mock_db_session.query.return_value.filter.return_value.first.return_value = None
+    def test_delete_user_basic(self, user_controller, mock_db_session):
+        # Test user ID
+        user_id = "test-user-id"
         
-        with pytest.raises(ValueError):
-            user_controller.modify_user('nonexistent_id', {'email': 'new@example.com', 'user_name': 'newname'})
-
-    def test_delete_user(self, user_controller, mock_db_session):
-        # Test user deletion
-        user_id = 'test_id'
+        # Test deleting user
         user_controller.delete_user(user_id)
         
+        # Verify database interactions
         mock_db_session.query.assert_called_once()
         mock_db_session.commit.assert_called_once()
+        
+        # Verify the delete statement was executed with correct user ID
+        delete_stmt = mock_db_session.query.call_args[0][0]
+        assert str(delete_stmt) == str(delete(User).where(User.id == user_id))
+
+    def test_get_all_users_basic(self, user_controller, mock_db_session):
+        # Create sample users list
+        sample_users = [
+            User(id='1', username='user1', email='user1@example.com'),
+            User(id='2', username='user2', email='user2@example.com'),
+            User(id='3', username='user3', email='user3@example.com')
+        ]
+        
+        # Configure mock to return the sample users
+        mock_db_session.query.return_value.all.return_value = sample_users
+        
+        # Test getting all users
+        result = user_controller.get_users()
+        
+        # Assert we got all users back
+        assert len(result) == 3
+        assert result == sample_users
+        
+        # Verify database was queried
+        mock_db_session.query.assert_called_once()
+        mock_db_session.query.return_value.all.assert_called_once()
+
+    def test_create_user_duplicate_email(self, user_controller, mock_db_session, sample_user_data):
+        # Test 1: Unique email (no existing user)
+        mock_db_session.query.return_value.filter.return_value.first.return_value = None
+        
+        result = user_controller.create_user(sample_user_data)
+        assert result.email == sample_user_data['email']
+        
+        # Test 2: Duplicate email (existing user)
+        mock_db_session.query.return_value.filter.return_value.first.return_value = sample_user
+        
+        with pytest.raises(ValueError) as exc_info:
+            user_controller.create_user(sample_user_data)
+        
+        assert str(exc_info.value) == "Email already exists"
+        
+        # Verify database was queried for both attempts
+        assert mock_db_session.query.call_count == 2
+
+    def test_modify_user_success_message(self, user_controller, mock_db_session, sample_user):
+        app = Flask(__name__)
+        app.register_blueprint(users)
+        
+        # Configure mock to return the sample user for the existence check
+        mock_db_session.query.return_value.filter.return_value.first.return_value = sample_user
+        
+        # Test data for update
+        update_data = {
+            'email': 'updated@example.com',
+            'user_name': 'updateduser'
+        }
+        
+        with app.test_client() as client:
+            with patch('model_serving.routes.users.user_controller') as mock_controller:
+                mock_controller.modify_user.return_value = sample_user
+                
+                # Make the request
+                response = client.patch(
+                    f'/users/{sample_user.id}',
+                    json=update_data
+                )
+                
+                # Assert response
+                assert response.status_code == 200
+                response_data = response.get_json()
+                assert response_data['message'] == 'User details updated successfully'
+                assert 'user' in response_data
+                assert response_data['user']['id'] == sample_user.id
+
+    def test_modify_user_error_cases(self, user_controller, mock_db_session, sample_user):
+        app = Flask(__name__)
+        app.register_blueprint(users)
+        
+        # Test Case 1: Missing required fields
+        incomplete_data = {
+            'email': 'test@example.com'
+            # missing user_name field
+        }
+        
+        with app.test_client() as client:
+            with patch('model_serving.routes.users.user_controller') as mock_controller:
+                mock_controller.modify_user.side_effect = KeyError("Missing required fields: user_name")
+                
+                response = client.patch(
+                    f'/users/{sample_user.id}',
+                    json=incomplete_data
+                )
+                
+                # Assert response for missing fields
+                assert response.status_code == 400
+                response_data = response.get_json()
+                assert "Missing required fields" in response_data['message']
+        
+        # Test Case 2: User not found
+        valid_data = {
+            'email': 'test@example.com',
+            'user_name': 'testuser'
+        }
+        
+        with app.test_client() as client:
+            with patch('model_serving.routes.users.user_controller') as mock_controller:
+                mock_controller.modify_user.side_effect = ValueError("User not found")
+                
+                response = client.patch(
+                    '/users/nonexistent-id',
+                    json=valid_data
+                )
+                
+                # Assert response for user not found
+                assert response.status_code == 404
+                response_data = response.get_json()
+                assert response_data['message'] == 'User does not exist'
+
+    def test_email_validation(self, user_controller, mock_db_session):
+        app = Flask(__name__)
+        app.register_blueprint(users)
+        
+        # Test Case 1: Valid email format
+        valid_data = {
+            'username': 'testuser',
+            'email': 'valid@example.com'
+        }
+        
+        with app.test_client() as client:
+            with patch('model_serving.routes.users.user_controller') as mock_controller:
+                mock_controller.create_user.return_value = User(
+                    id='test-id',
+                    username=valid_data['username'],
+                    email=valid_data['email']
+                )
+                
+                response = client.post('/users', json=valid_data)
+                
+                # Assert successful creation
+                assert response.status_code == 201
+                response_data = response.get_json()
+                assert response_data['email'] == valid_data['email']
+        
+        # Test Case 2: Invalid email formats
+        invalid_emails = [
+            'notanemail',           # No @ symbol
+            '@nodomain',            # No local part
+            'no.domain@',           # No domain part
+            'spaces in@email.com',  # Contains spaces
+            'wrong@domain.',        # Incomplete domain
+        ]
+        
+        with app.test_client() as client:
+            with patch('model_serving.routes.users.user_controller') as mock_controller:
+                mock_controller.create_user.side_effect = ValueError("Invalid email format")
+                
+                for invalid_email in invalid_emails:
+                    invalid_data = {
+                        'username': 'testuser',
+                        'email': invalid_email
+                    }
+                    
+                    response = client.post('/users', json=invalid_data)
+                    
+                    # Assert validation failure
+                    assert response.status_code == 400
+                    response_data = response.get_json()
+                    assert response_data['message'] == 'Invalid email format'
 

@@ -1,0 +1,30 @@
+1. Create User Test (Story 1):
+pytest model_serving/tests/controllers/test_users.py -k test_create_user_basic -v
+
+2. View User Test (Story 2):
+pytest model_serving/tests/controllers/test_users.py -k test_get_user_basic -v
+
+3. Update User Test (Story 3):
+pytest model_serving/tests/controllers/test_users.py -k test_modify_user_basic -v
+
+4. Delete User Test (Story 4):
+pytest model_serving/tests/controllers/test_users.py -k test_delete_user_basic -v
+
+5. Get All Users Test (Story 5):
+pytest model_serving/tests/controllers/test_users.py -k test_get_all_users_basic -v
+
+6. Unique Email Test (Story 6):
+pytest model_serving/tests/controllers/test_users.py -k test_create_user_duplicate_email -v
+
+7. Success Message Test (Story 7):
+pytest model_serving/tests/controllers/test_users.py -k test_modify_user_success_message -v
+
+8. Error Handling Test (Story 8):
+pytest model_serving/tests/controllers/test_users.py -k test_modify_user_error_cases -v
+
+9. Email Validation Test (Story 9):
+pytest model_serving/tests/controllers/test_users.py -k test_email_validation -v
+
+Run all tests:
+pytest model_serving/tests/controllers/test_users.py -v
+
