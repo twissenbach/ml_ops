@@ -2,7 +2,11 @@ import time
 import os
 import tempfile
 
-os.environ['prometheus_multiproc_dir'] = tempfile.mkdtemp()
+# os.environ['prometheus_multiproc_dir'] = tempfile.mkdtemp()
+# Ensure a persistent multiproc directory
+PROMETHEUS_DIR = "/tmp/prometheus_multiproc"
+os.makedirs(PROMETHEUS_DIR, exist_ok=True)
+os.environ["PROMETHEUS_MULTIPROC_DIR"] = PROMETHEUS_DIR
 
 
 from flask import request
@@ -10,8 +14,8 @@ from prometheus_client import CollectorRegistry, Counter, Histogram, multiproces
 
 
 registry = CollectorRegistry()
-multiprocess.MultiProcessCollector(registry=registry, path="/tmp/prometheus_multiproc")
-# multiprocess.MultiProcessCollector(registry=registry)
+# multiprocess.MultiProcessCollector(registry=registry, path="/tmp/prometheus_multiproc")
+multiprocess.MultiProcessCollector(registry=registry)
 
 
 REQUEST_COUNT = Counter('request_count', 'Total number of requests', ['method', 'endpoint', 'http_status'], registry=registry)
