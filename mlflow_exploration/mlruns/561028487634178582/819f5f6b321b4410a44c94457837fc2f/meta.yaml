@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlflow_exploration/mlruns/561028487634178582/819f5f6b321b4410a44c94457837fc2f/artifacts
+end_time: 1738282450548
+entry_point_name: ''
+experiment_id: '561028487634178582'
+lifecycle_stage: active
+run_id: 819f5f6b321b4410a44c94457837fc2f
+run_name: unique-sloth-123
+run_uuid: 819f5f6b321b4410a44c94457837fc2f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1738282447638
+status: 3
+tags: []
+user_id: troywissenbach

@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlflow_exploration/mlruns/561028487634178582/c4be736ac55b429aa311298506921e6f/artifacts
+end_time: 1738282817365
+entry_point_name: ''
+experiment_id: '561028487634178582'
+lifecycle_stage: active
+run_id: c4be736ac55b429aa311298506921e6f
+run_name: inquisitive-croc-136
+run_uuid: c4be736ac55b429aa311298506921e6f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1738282812092
+status: 3
+tags: []
+user_id: troywissenbach

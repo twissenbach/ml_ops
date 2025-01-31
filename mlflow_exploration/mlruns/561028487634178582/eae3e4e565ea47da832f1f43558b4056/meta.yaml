@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlflow_exploration/mlruns/561028487634178582/eae3e4e565ea47da832f1f43558b4056/artifacts
+end_time: 1738283744191
+entry_point_name: ''
+experiment_id: '561028487634178582'
+lifecycle_stage: active
+run_id: eae3e4e565ea47da832f1f43558b4056
+run_name: gaudy-shrew-949
+run_uuid: eae3e4e565ea47da832f1f43558b4056
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1738283743801
+status: 3
+tags: []
+user_id: troywissenbach

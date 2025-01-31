@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlflow_exploration/mlruns/561028487634178582/2a8f7b5d2b3a452ca5a8955a1bdd9936/artifacts
+end_time: 1738282817315
+entry_point_name: ''
+experiment_id: '561028487634178582'
+lifecycle_stage: active
+run_id: 2a8f7b5d2b3a452ca5a8955a1bdd9936
+run_name: luminous-bear-602
+run_uuid: 2a8f7b5d2b3a452ca5a8955a1bdd9936
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1738282812092
+status: 3
+tags: []
+user_id: troywissenbach

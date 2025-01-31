@@ -1,0 +1,29 @@
+digest: 70fa66cb
+name: training
+profile: '{"num_rows": 284, "num_elements": 8804}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "mean radius", "required":
+  true}, {"type": "double", "name": "mean texture", "required": true}, {"type": "double",
+  "name": "mean perimeter", "required": true}, {"type": "double", "name": "mean area",
+  "required": true}, {"type": "double", "name": "mean smoothness", "required": true},
+  {"type": "double", "name": "mean compactness", "required": true}, {"type": "double",
+  "name": "mean concavity", "required": true}, {"type": "double", "name": "mean concave
+  points", "required": true}, {"type": "double", "name": "mean symmetry", "required":
+  true}, {"type": "double", "name": "mean fractal dimension", "required": true}, {"type":
+  "double", "name": "radius error", "required": true}, {"type": "double", "name":
+  "texture error", "required": true}, {"type": "double", "name": "perimeter error",
+  "required": true}, {"type": "double", "name": "area error", "required": true}, {"type":
+  "double", "name": "smoothness error", "required": true}, {"type": "double", "name":
+  "compactness error", "required": true}, {"type": "double", "name": "concavity error",
+  "required": true}, {"type": "double", "name": "concave points error", "required":
+  true}, {"type": "double", "name": "symmetry error", "required": true}, {"type":
+  "double", "name": "fractal dimension error", "required": true}, {"type": "double",
+  "name": "worst radius", "required": true}, {"type": "double", "name": "worst texture",
+  "required": true}, {"type": "double", "name": "worst perimeter", "required": true},
+  {"type": "double", "name": "worst area", "required": true}, {"type": "double", "name":
+  "worst smoothness", "required": true}, {"type": "double", "name": "worst compactness",
+  "required": true}, {"type": "double", "name": "worst concavity", "required": true},
+  {"type": "double", "name": "worst concave points", "required": true}, {"type": "double",
+  "name": "worst symmetry", "required": true}, {"type": "double", "name": "worst fractal
+  dimension", "required": true}, {"type": "long", "name": "label", "required": true}]}'
+source: '{"uri": "file:///Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlflow_exploration/mlruns/561028487634178582/d729a69f7ded4654aeee350cc21deac4/artifacts/training.csv"}'
+source_type: local

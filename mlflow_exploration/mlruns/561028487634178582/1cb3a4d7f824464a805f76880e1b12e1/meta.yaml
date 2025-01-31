@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlflow_exploration/mlruns/561028487634178582/1cb3a4d7f824464a805f76880e1b12e1/artifacts
+end_time: 1738282817315
+entry_point_name: ''
+experiment_id: '561028487634178582'
+lifecycle_stage: active
+run_id: 1cb3a4d7f824464a805f76880e1b12e1
+run_name: youthful-goat-536
+run_uuid: 1cb3a4d7f824464a805f76880e1b12e1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1738282812092
+status: 3
+tags: []
+user_id: troywissenbach

@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlflow_exploration/mlruns/561028487634178582/49b453da83f24b1db4dd621d6a01a9b4/artifacts
+end_time: 1738283163591
+entry_point_name: ''
+experiment_id: '561028487634178582'
+lifecycle_stage: active
+run_id: 49b453da83f24b1db4dd621d6a01a9b4
+run_name: redolent-ram-313
+run_uuid: 49b453da83f24b1db4dd621d6a01a9b4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1738283160627
+status: 3
+tags: []
+user_id: troywissenbach
