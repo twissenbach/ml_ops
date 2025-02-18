@@ -1,0 +1,18 @@
+from model_serving.models.prediction import Model
+import mlflow.pyfunc
+from model_serving.config import Config
+
+class MLFlowGateway:
+    def __init__(self):
+        mlflow.set_tracking_uri(Config.TRACKING_URI)
+
+    def get_model(self, model_name: str, model_version: str) -> Model:
+        model_uri = f'runs:/{model_version}/{model_name}'
+        mlflow_model = mlflow.pyfunc.load_model(model_uri)
+        
+        return Model(
+            model_name=model_name,
+            model_version=model_version,
+            model_type="mlflow",  # or you might want to detect the actual model type
+            _model=mlflow_model
+        )
