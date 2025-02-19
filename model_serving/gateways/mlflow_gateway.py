@@ -1,6 +1,7 @@
+import mlflow
+
 from model_serving.models.prediction import Model
-import mlflow.pyfunc
-from model_serving.config import Config
+
 
 class MLFlowGateway:
 
@@ -47,6 +48,6 @@ class MLFlowGateway:
         model.labels = model_["labels"]
 
         return model
-    
+
+
 mlflow_gateway: MLFlowGateway = MLFlowGateway()
-# MLFlowGateway = MLFlowGateway()

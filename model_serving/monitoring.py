@@ -1,27 +1,18 @@
 import time
-import os
-import tempfile
-
-# os.environ['prometheus_multiproc_dir'] = tempfile.mkdtemp()
-# Ensure a persistent multiproc directory
-PROMETHEUS_DIR = "/tmp/prometheus_multiproc"
-os.makedirs(PROMETHEUS_DIR, exist_ok=True)
-os.environ["PROMETHEUS_MULTIPROC_DIR"] = PROMETHEUS_DIR
-
 
 from flask import request
 from prometheus_client import CollectorRegistry, Counter, Histogram, multiprocess
 
-
 registry = CollectorRegistry()
-# multiprocess.MultiProcessCollector(registry=registry, path="/tmp/prometheus_multiproc")
 multiprocess.MultiProcessCollector(registry=registry)
 
+REQUEST_COUNT = Counter('request_count', 'Total number of requests', ['method', 'endpoint', 'http_status'],
+                        registry=registry)
+REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds',
+                            ['method', 'endpoint', 'http_status'], registry=registry)
 
-REQUEST_COUNT = Counter('request_count', 'Total number of requests', ['method', 'endpoint', 'http_status'], registry=registry)
-REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds', ['method', 'endpoint', 'http_status'], registry=registry)
-
-# DATABASE_LATENCY = Histogram('database_latency', 'Database Latency', ['method', 'endpoint', 'http_status'], registry=registry)
+# Create a histogram metric to track the duration of function executions
+FUNCTION_DURATION = Histogram('function_duration_seconds', 'Time spent processing the function', ['function_name'])
 
 
 def before_request():
@@ -37,8 +28,7 @@ def after_request(response):
 
 
 def init_metrics(app):
-    
     with app.app_context():
         app.before_request(before_request)
-        
+
         app.after_request(after_request)

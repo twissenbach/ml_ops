@@ -1,37 +1,36 @@
 import logging
 
 from model_serving.models.prediction import Model, Prediction
-from model_serving.domain.common_enums import Labels
+from model_serving.monitoring import FUNCTION_DURATION
+
 
 logger = logging.getLogger(__name__)
+
 
 class InferenceService:
 
     @staticmethod
+    @FUNCTION_DURATION.labels('create_prediction').time()
     def create_inference(model: Model, prediction: Prediction) -> Prediction:
 
-
-
-        probability = None
-        if hasattr(model, 'predict_proba'):
-            # this will change in the future
-            # probability = model._model.predict_proba(prediction.inputs) # default to predict_proba because we get more information from it
+        if hasattr(model.model, 'predict_proba'):
+            # This will change in the future
             probability = model.model.predict_proba(prediction.get_pandas_frame_of_inputs())[:,1][0]
 
-            if model.threshold > probability:
+            if model.threshold['value'] > probability:
                 label = model.threshold['above']
-            elif model.threshold == probability:
+            elif model.threshold['value'] == probability:
                 label = model.threshold['equal']
             else:
                 label = model.threshold['below']
 
         else:
-            model._model.predict(prediction.inputs)
+            label = model._model.predict(prediction.inputs)
 
-        prediction.probabilities = probability
+        prediction.probability = probability
         prediction.threshold = model.threshold['value']
         prediction.label = label
 
         return prediction
-    
+
 inference_service = InferenceService()

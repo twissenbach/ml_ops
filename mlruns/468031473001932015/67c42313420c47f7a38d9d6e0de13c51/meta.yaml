@@ -1,0 +1,15 @@
+artifact_uri: /Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlruns/468031473001932015/67c42313420c47f7a38d9d6e0de13c51/artifacts
+end_time: 1739925601982
+entry_point_name: ''
+experiment_id: '468031473001932015'
+lifecycle_stage: active
+run_id: 67c42313420c47f7a38d9d6e0de13c51
+run_name: secretive-vole-216
+run_uuid: 67c42313420c47f7a38d9d6e0de13c51
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739925366977
+status: 3
+tags: []
+user_id: troywissenbach
