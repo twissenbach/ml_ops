@@ -16,8 +16,17 @@ class MLFlowGateway:
                 flavor_ = self.models[model][version].get('mlflow_flavor', 'pyfunc')
                 self.models[model][version]["model"] = self._load_model(self._get_model_uri(model, version), flavor_)
 
+                if self.models[model][version].get('explainer', False):
+                    from mlflow.client import MlflowClient
+
+                    run_id = MlflowClient().get_model_version(model, version).run_id
+                    self.models[model][version]['explainer'] = self._load_model(self._get_explainer_uri(run_id))
+
     def _get_model_uri(self, model_name, model_version):
         return f"models:/{model_name}/{model_version}"
+    
+    def _get_explainer_uri(self, run_id):
+        return f"runs:/{run_id}/model/explainer"
 
     def _load_model(self, model_uri, model_flavor):
         if model_flavor == "sklearn":

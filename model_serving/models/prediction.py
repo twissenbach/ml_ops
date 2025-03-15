@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 import pandas as pd
 import hashlib
 import uuid
@@ -21,11 +21,22 @@ class Model:
     model_version: str = None
     model_type: str = None
     threshold: Union[float, None] = None
+    labels: Union[None, List[Labels]] = None
     _model = None
+    _explainer = None
 
     def __post_init__(self):
         if not self.id:
             self.id = hashlib.md5((self.model_name + str(self.model_version)).encode()).hexdigest()
+
+
+
+@dataclass_json
+@dataclass
+class Shap:
+    id: str = field(default_factory=get_id)
+    label: Union[None, Labels] = None
+    shap_values: dict = field(default_factory=dict)
 
 
 @dataclass_json
@@ -38,6 +49,7 @@ class Prediction:
     probability: Union[float, None] = None
     actual: Union[Actuals, int, float, None] = None
     threshold: Union[float, None] = None
+    shap_values: List[Shap] = field(default_factory=dict)
 
     model: Model = None
 

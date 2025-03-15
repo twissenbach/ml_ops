@@ -2,3 +2,4 @@ flask
 flask_sqlalchemy
 prometheus-client
 numpy==1.26.4
+umap-learn==0.5.7

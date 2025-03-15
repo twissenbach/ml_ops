@@ -20,7 +20,7 @@ class ModelSQL(db.Model):
     updated: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
-    predictions: Mapped[List['PredictionSQL']] = relationship(back_populates='model')
+    predictions: Mapped[List["PredictionSQL"]] = relationship(back_populates='model')
 
 
     @classmethod
@@ -45,6 +45,21 @@ class ModelSQL(db.Model):
 
     def __repr__(self):
         return f'Model Name {self.model_name}, Model Version {self.model_version}'
+    
+class ShapSQL(db.Model):
+
+    __tablename__ = 'shaps'
+
+    id: Mapped[str] = mapped_column(db.String(120), primary_key=True)
+    type: Mapped[str] = mapped_column(db.String(120), primary_key=True)
+    shap_values: Mapped[dict] = mapped_column(CLOB)
+
+
+    updated: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+    prediction_id: Mapped['PredictionSQL'] = mapped_column(db.String(120), ForeignKey("predictions.id"), nullable=False)
+    
 
 
 class PredictionSQL(db.Model):
@@ -62,7 +77,8 @@ class PredictionSQL(db.Model):
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
     model_id: Mapped['ModelSQL'] = mapped_column(db.String(120), ForeignKey("models.id"), nullable=False)
-    model: Mapped['ModelSQL'] = relationship(back_populates='predictions')
+    model: Mapped["ModelSQL"] = relationship(back_populates='predictions')
+
 
     @classmethod
     def from_prediction(cls, prediction: Prediction, model: ModelSQL) -> 'PredictionSQL':

@@ -1,0 +1,15 @@
+artifact_uri: /Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlruns/468031473001932015/e947551dd54b456688ec922ddca46217/artifacts
+end_time: 1740701317575
+entry_point_name: ''
+experiment_id: '468031473001932015'
+lifecycle_stage: active
+run_id: e947551dd54b456688ec922ddca46217
+run_name: tasteful-mouse-241
+run_uuid: e947551dd54b456688ec922ddca46217
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740701315669
+status: 1
+tags: []
+user_id: troywissenbach
