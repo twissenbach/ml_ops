@@ -1,4 +1,5 @@
 import enum
+from enum import Enum
 
 class Labels(enum.StrEnum):
     FRAUD = 'FRAUD'
@@ -9,3 +10,7 @@ class Labels(enum.StrEnum):
     BENIGN = "BENIGN"
 
 Actuals = Labels
+
+class ModelType(Enum):
+    CLASSIFICATION = "classification"
+    REGRESSION = "regression"

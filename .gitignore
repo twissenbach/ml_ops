@@ -4,3 +4,10 @@ venv/
 .venv/
 
 __pycache__/
+
+# Coverage files
+.coverage
+htmlcov/
+
+# macOS system files
+.DS_Store

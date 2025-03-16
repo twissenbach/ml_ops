@@ -13,17 +13,20 @@ logger = logging.getLogger(__name__)
 
 class UserController:
 
-    def create_user(self, data):
-
-        # Validate the email
-        new_user = User(id=uuid.uuid4().hex, username=data['username'], email=data['email'])
-
-        db.session.add(new_user)
+    def create_user(self, user_data: dict):
+        # Check for existing email
+        existing_user = db.session.query(User).filter(User.email == user_data['email']).first()
+        if existing_user:
+            raise ValueError("Email already exists")
+        
+        user = User(
+            id=uuid.uuid4().hex,
+            username=user_data['username'],
+            email=user_data['email']
+        )
+        db.session.add(user)
         db.session.commit()
-
-        logger.debug(f'Created user id {new_user.id} for {new_user.email}')
-
-        return new_user
+        return user
     
     def get_user(self, user_id):
 
@@ -52,14 +55,16 @@ class UserController:
         # Return
         return user
     
-    def delete_user(self, user_id) -> None:
-
-        addresses = db.session.query(User).filter(User.id == user_id)
-        addresses.delete(synchronize_session=False)
-
+    def delete_user(self, user_id: str):
+        user = db.session.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise ValueError("User not found")
+        db.session.delete(user)
         db.session.commit()
 
-        return
+    def get_users(self):
+        """Get all users"""
+        return db.session.query(User).all()
 
 
 user_controller: UserController = UserController()

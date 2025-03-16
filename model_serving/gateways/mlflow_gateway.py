@@ -1,6 +1,6 @@
 import mlflow
-
 from model_serving.models.prediction import Model
+from model_serving.domain.common_enums import ModelType
 
 
 class MLFlowGateway:
@@ -47,14 +47,14 @@ class MLFlowGateway:
         model_ = self.models[model_name][model_version]
 
         model = Model(
-            model_type=model_["model_type"]
-            , model_name=model_name
-            , model_version=model_version
-            , threshold=model_["threshold"]
+            model_type=model_["model_type"],
+            model_name=model_name,
+            model_version=model_version,
+            threshold=model_["threshold"] if model_["model_type"] == ModelType.CLASSIFICATION.value else None,
+            labels=model_["labels"] if model_["model_type"] == ModelType.CLASSIFICATION.value else None
         )
 
         model.model = model_['model']
-        model.labels = model_["labels"]
 
         return model
 

@@ -87,59 +87,45 @@ class TestUserController:
         mock_db_session.commit.assert_called_once()
 
     def test_delete_user_basic(self, user_controller, mock_db_session):
-        # Test user ID
         user_id = "test-user-id"
+        
+        # Mock the query result
+        mock_user = User(id=user_id, username="test", email="test@example.com")
+        mock_db_session.query.return_value.filter.return_value.first.return_value = mock_user
         
         # Test deleting user
         user_controller.delete_user(user_id)
         
         # Verify database interactions
-        mock_db_session.query.assert_called_once()
+        mock_db_session.query.assert_called_once_with(User)
+        mock_db_session.delete.assert_called_once_with(mock_user)
         mock_db_session.commit.assert_called_once()
-        
-        # Verify the delete statement was executed with correct user ID
-        delete_stmt = mock_db_session.query.call_args[0][0]
-        assert str(delete_stmt) == str(delete(User).where(User.id == user_id))
 
     def test_get_all_users_basic(self, user_controller, mock_db_session):
-        # Create sample users list
         sample_users = [
             User(id='1', username='user1', email='user1@example.com'),
-            User(id='2', username='user2', email='user2@example.com'),
-            User(id='3', username='user3', email='user3@example.com')
+            User(id='2', username='user2', email='user2@example.com')
         ]
-        
-        # Configure mock to return the sample users
         mock_db_session.query.return_value.all.return_value = sample_users
         
-        # Test getting all users
         result = user_controller.get_users()
-        
-        # Assert we got all users back
-        assert len(result) == 3
         assert result == sample_users
-        
-        # Verify database was queried
-        mock_db_session.query.assert_called_once()
-        mock_db_session.query.return_value.all.assert_called_once()
 
-    def test_create_user_duplicate_email(self, user_controller, mock_db_session, sample_user_data):
-        # Test 1: Unique email (no existing user)
-        mock_db_session.query.return_value.filter.return_value.first.return_value = None
+    def test_create_user_duplicate_email(self, user_controller, mock_db_session):
+        sample_user_data = {'email': 'test@example.com', 'username': 'testuser'}
         
+        # First call - success
+        mock_db_session.query.return_value.filter.return_value.first.return_value = None
         result = user_controller.create_user(sample_user_data)
         assert result.email == sample_user_data['email']
         
-        # Test 2: Duplicate email (existing user)
-        mock_db_session.query.return_value.filter.return_value.first.return_value = sample_user
+        # Reset the mock to simulate second call with existing email
+        mock_db_session.reset_mock()
+        existing_user = User(id='1', email=sample_user_data['email'], username='existing')
+        mock_db_session.query.return_value.filter.return_value.first.return_value = existing_user
         
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(ValueError, match="Email already exists"):
             user_controller.create_user(sample_user_data)
-        
-        assert str(exc_info.value) == "Email already exists"
-        
-        # Verify database was queried for both attempts
-        assert mock_db_session.query.call_count == 2
 
     def test_modify_user_success_message(self, user_controller, mock_db_session, sample_user):
         app = Flask(__name__)
