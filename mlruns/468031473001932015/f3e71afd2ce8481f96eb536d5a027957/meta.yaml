@@ -1,0 +1,15 @@
+artifact_uri: /Users/troywissenbach/Documents/spring_25_classes/ml_ops/mlruns/468031473001932015/f3e71afd2ce8481f96eb536d5a027957/artifacts
+end_time: 1743286781339
+entry_point_name: ''
+experiment_id: '468031473001932015'
+lifecycle_stage: active
+run_id: f3e71afd2ce8481f96eb536d5a027957
+run_name: worried-pig-524
+run_uuid: f3e71afd2ce8481f96eb536d5a027957
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1743286697946
+status: 3
+tags: []
+user_id: troywissenbach
