@@ -35,3 +35,39 @@ class TestPrediction(unittest.TestCase):
             probability=None  # Regression might not have probability
         )
         self.assertEqual(prediction.value, 42.5)
+
+    def test_to_json_with_embeddings(self):
+        # Test to_json with embeddings
+        prediction = Prediction(
+            inputs={"feature1": 1.0},
+            value=Labels.BENIGN
+        )
+        prediction.embeddings = [0.1, 0.2, 0.3]
+        result = prediction.to_json()
+        
+        self.assertIn("embeddings", result)
+        self.assertEqual(result["embeddings"]["x"], 0.1)
+        self.assertEqual(result["embeddings"]["y"], 0.2)
+        self.assertEqual(result["embeddings"]["z"], 0.3)
+
+    def test_to_json_with_2d_embeddings(self):
+        # Test to_json with 2D embeddings
+        prediction = Prediction(
+            inputs={"feature1": 1.0},
+            value=Labels.BENIGN
+        )
+        prediction.embeddings = [0.1, 0.2]
+        result = prediction.to_json()
+        
+        self.assertIn("embeddings", result)
+        self.assertEqual(result["embeddings"]["x"], 0.1)
+        self.assertEqual(result["embeddings"]["y"], 0.2)
+        self.assertNotIn("z", result["embeddings"])
+
+    def test_invalid_inputs(self):
+        # Test input validation
+        with self.assertRaises(ValueError):
+            Prediction(inputs={"feature1": "not_a_number"})
+        
+        with self.assertRaises(ValueError):
+            Prediction(inputs="not_a_dict")

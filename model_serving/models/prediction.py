@@ -50,6 +50,7 @@ class Prediction:
     actual: Union[float, None] = None
     threshold: Union[float, None] = None
     shap_values: List[Shap] = field(default_factory=list)
+    embeddings: Optional[List[float]] = None
     model: Model = None
     metadata: dict = field(default_factory=dict)
     _input_key: str = None
@@ -118,5 +119,21 @@ class Prediction:
             
             if shap_dict:
                 result["shap_values"] = shap_dict
+        
+        # Add embeddings to the response
+        if self.embeddings is not None:
+            # Format according to the required structure
+            # For a 2D embedding (x, y), or 3D (x, y, z)
+            dims = len(self.embeddings)
+            embedding_dict = {"kind": "inputs"}
+            
+            if dims >= 1:
+                embedding_dict["x"] = float(self.embeddings[0])
+            if dims >= 2:
+                embedding_dict["y"] = float(self.embeddings[1])
+            if dims >= 3:
+                embedding_dict["z"] = float(self.embeddings[2])
+                
+            result["embeddings"] = embedding_dict
         
         return result

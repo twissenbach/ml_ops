@@ -2,6 +2,7 @@ import logging
 
 from model_serving.models.prediction import Prediction, Model
 from model_serving.services.inference_service import inference_service
+from model_serving.services.umap_service import umap_service
 from model_serving.gateways.mlflow_gateway import mlflow_gateway
 from model_serving.services.database.database_client import db
 from model_serving.services.database.prediction import ModelSQL, PredictionSQL
@@ -35,6 +36,14 @@ class PredictionController:
             # Create inference
             try:
                 prediction = inference_service.create_inference(model, prediction)
+                
+                # Add UMAP embeddings
+                try:
+                    embeddings = umap_service.create_embedding(model, prediction)
+                    prediction.embeddings = embeddings
+                except Exception as e:
+                    logger.error(f"Failed to create UMAP embeddings: {str(e)}") # continue prediction if embeddings fail
+                
             except Exception as e:
                 raise InferenceException(f"Failed to create prediction: {str(e)}")
 

@@ -17,6 +17,7 @@ class PredictionSQL(db.Model):
     value: Mapped[str] = mapped_column(db.String(120), nullable=True)
     probability: Mapped[float] = mapped_column(Numeric, nullable=True)
     actual: Mapped[float] = mapped_column(Numeric, nullable=True)
+    embeddings: Mapped[str] = mapped_column(CLOB, nullable=True)
     updated: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
@@ -31,16 +32,20 @@ class PredictionSQL(db.Model):
             , value=str(prediction.value.value) if prediction.model.model_type == ModelType.CLASSIFICATION.value else str(prediction.value)
             , probability=prediction.probability
             , actual=float(prediction.actual) if prediction.actual else None
+            , embeddings=json.dumps(prediction.embeddings) if prediction.embeddings else None
             , model_id=model.id
         )
 
     def to_prediction(self) -> Prediction:
+        embeddings_data = json.loads(self.embeddings) if self.embeddings else None
+        
         return Prediction(
             id=self.id,
             inputs=json.loads(self.inputs),
             value=float(self.value) if self.model.model_type == ModelType.REGRESSION.value else Labels(self.value),
             probability=float(self.probability) if self.probability else None,
             actual=float(self.actual) if self.actual else None,
+            embeddings=embeddings_data,
             model=Model(
                 id=self.model_id,
                 model_type=ModelType(self.model.model_type),
